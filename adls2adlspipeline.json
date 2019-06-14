@@ -1,0 +1,207 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "dataFactoryName": {
+            "type": "string",
+            "metadata": "Data Factory Name"
+        },
+        "adls_accountName": {
+            "type": "string",
+            "metadata": "Data Lake Store Name"
+        },
+        "spkey": {
+            "type": "string"
+        },
+        "spid": {
+            "type": "string"
+        },
+        "tenantId": {
+            "type": "string",
+            "defaultValue": "c160a942-c869-429f-8a96-f8c8296d57db"
+        },
+        "subscription_id": {
+            "type": "string",
+            "defaultValue": "7bf6e74a-2525-44fa-b0a2-661c6ba2222a"
+        },
+        "adla_accountName": {
+            "type": "string"
+        },
+        "adlsFolder": {
+            "type": "string"
+        },
+        "preprocessfile": {
+            "type": "string"
+        },
+        "processedfile": {
+            "type": "string"
+        },
+        "usqlscriptpath": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('dataFactoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "[parameters('dataFactoryName')]",
+            "apiVersion": "2018-06-01",
+            "type": "Microsoft.DataFactory/factories",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "mode": "Incremental"
+            },
+            "resources": [
+                {
+                    "name": "[concat(parameters('dataFactoryName'), '/adlsls4')]",
+                    "type": "Microsoft.DataFactory/factories/linkedServices",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "annotations": [],
+                        "type": "AzureDataLakeStore",
+                        "typeProperties": {
+                            "dataLakeStoreUri": "[concat('https://', parameters('adls_accountName'), '.azuredatalakestore.net/webhdfs/v1')]",
+                            "servicePrincipalId": "[parameters('spid')]",
+                            "servicePrincipalKey": {
+                                "type": "SecureString",
+                                "value": "[parameters('spkey')]"
+                            },
+                            "tenant": "[parameters('tenantId')]",
+                            "subscriptionId": "[parameters('subscription_id')]",
+                            "resourceGroupName": "[resourceGroup().name]"
+                        }
+                    },
+                    "dependsOn": [
+                        "[parameters('dataFactoryName')]"
+                    ]
+                },
+                {
+                    "name": "[concat(parameters('dataFactoryName'), '/adlals4')]",
+                    "type": "Microsoft.DataFactory/factories/linkedServices",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "annotations": [],
+                        "type": "AzureDataLakeAnalytics",
+                        "typeProperties": {
+                            "accountName": "[parameters('adla_accountName')]",
+                            "servicePrincipalId": "[parameters('spid')]",
+                            "servicePrincipalKey": {
+                                "type": "SecureString",
+                                "value": "[parameters('spkey')]"
+                            },
+                            "tenant": "[parameters('tenantId')]",
+                            "subscriptionId": "[parameters('subscription_id')]",
+                            "resourceGroupName": "[resourceGroup().name]"
+                        }
+                    },
+                    "dependsOn": [
+                        "[parameters('dataFactoryName')]"
+                    ]
+                },
+                {
+                    "name": "[concat(parameters('dataFactoryName'), '/adlsdsip4')]",
+                    "type": "Microsoft.DataFactory/factories/datasets",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "linkedServiceName": {
+                            "referenceName": "adlsls4",
+                            "type": "LinkedServiceReference"
+                        },
+                        "annotations": [],
+                        "type": "DelimitedText",
+                        "typeProperties": {
+                            "location": {
+                                "type": "AzureDataLakeStoreLocation",
+                                "folderPath": "[parameters('adlsFolder')]"
+                            },
+                            "columnDelimiter": ",",
+                            "escapeChar": "\\",
+                            "quoteChar": "\""
+                        },
+                        "schema": [
+                            {
+                                "name": "Prop_0",
+                                "type": "String"
+                            }
+                        ]
+                    },
+                    "dependsOn": [
+                        "[concat(variables('factoryId'), '/linkedServices/adlsls4')]",
+                        "[parameters('dataFactoryName')]"
+                    ]
+                },
+                {
+                    "name": "[concat(parameters('dataFactoryName'), '/adlsdsop4')]",
+                    "type": "Microsoft.DataFactory/factories/datasets",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "linkedServiceName": {
+                            "referenceName": "adlsls4",
+                            "type": "LinkedServiceReference"
+                        },
+                        "annotations": [],
+                        "type": "DelimitedText",
+                        "typeProperties": {
+                            "location": {
+                                "type": "AzureDataLakeStoreLocation",
+                                "folderPath": "[parameters('adlsFolder')]"
+                            },
+                            "columnDelimiter": ",",
+                            "escapeChar": "\\",
+                            "quoteChar": "\""
+                        },
+                        "schema": []
+                    },
+                    "dependsOn": [
+                        "[concat(variables('factoryId'), '/linkedServices/adlsls4')]",
+                        "[parameters('dataFactoryName')]"
+                    ]
+                },
+                {
+                    "name": "[concat(parameters('dataFactoryName'), '/transformpipeline')]",
+                    "type": "Microsoft.DataFactory/factories/pipelines",
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "activities": [
+                            {
+                                "name": "U-SQL1",
+                                "type": "DataLakeAnalyticsU-SQL",
+                                "dependsOn": [],
+                                "policy": {
+                                    "timeout": "7.00:00:00",
+                                    "retry": 0,
+                                    "retryIntervalInSeconds": 30,
+                                    "secureOutput": false,
+                                    "secureInput": false
+                                },
+                                "userProperties": [],
+                                "typeProperties": {
+                                    "scriptPath": "[parameters('usqlscriptpath')]",
+                                    "scriptLinkedService": {
+                                        "referenceName": "adlsls4",
+                                        "type": "LinkedServiceReference"
+                                    },
+                                    "parameters": {
+                                        "log_file": "[concat('adl://',parameters('adls_accountName'),'.azuredatalakestore.net/',parameters('adlsFolder'),'/',parameters('preprocessfile'),'.txt')]",
+                                        "summary_file": "[concat('adl://',parameters('adls_accountName'),'.azuredatalakestore.net/',parameters('adlsFolder'),'/',parameters('processedfile'),'.csv')]"
+                                    }
+                                },
+                                "linkedServiceName": {
+                                    "referenceName": "adlals4",
+                                    "type": "LinkedServiceReference"
+                                }
+                            }
+                        ],
+                        "annotations": []
+                    },
+                    "dependsOn": [
+                        "[concat(variables('factoryId'), '/linkedServices/adlals4')]",
+                        "[concat(variables('factoryId'), '/linkedServices/adlsls4')]",
+                        "[parameters('dataFactoryName')]"
+                    ]
+                }
+            ]
+        }
+    ]
+}

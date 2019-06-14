@@ -1,0 +1,269 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworks_name": {
+            "type": "string"
+        },
+        "appserviceplan_name": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "subnet1Name": "sqlservsubnet",
+        "subnet2Name": "keyvaultnsg",
+        "subnet3Name": "adlsubnet",
+        "subnet4Name": "managementsubnet",
+        "subnet5Name": "webaapsubnet",
+        "subnet6Name": "appgatewaysubnet",
+        "networkSecurityGroupName1": "sqlservnsg",
+        "networkSecurityGroupName2": "keyvaultnsg",
+        "networkSecurityGroupName3": "adlnsg",
+        "networkSecurityGroupName4": "managementnsg",
+        "networkSecurityGroupName5": "webappnsg",
+        "networkSecurityGroupName6": "appgatewaynsg"
+    },
+    "resources": [
+        {
+            "name": "[variables('networkSecurityGroupName1')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2018-12-01",
+            "location": "[resourceGroup().location]",
+            "comments": "Network Security Group (NSG) for your sql serv",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "*",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('networkSecurityGroupName2')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2018-12-01",
+            "location": "[resourceGroup().location]",
+            "comments": "Network Security Group (NSG) for your key vault",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "10.1.4.0/29",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "3389",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('networkSecurityGroupName3')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2018-12-01",
+            "location": "[resourceGroup().location]",
+            "comments": "Network Security Group (NSG) for your ADL",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "*",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('networkSecurityGroupName4')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2018-12-01",
+            "location": "[resourceGroup().location]",
+            "comments": "Network Security Group (NSG) for your management",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "3389",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('networkSecurityGroupName5')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2018-12-01",
+            "location": "[resourceGroup().location]",
+            "comments": "Network Security Group (NSG) for your webaap",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "10.1.4.0/29",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "3389",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "name": "[variables('networkSecurityGroupName6')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2018-12-01",
+            "location": "[resourceGroup().location]",
+            "comments": "Network Security Group (NSG) for your webaap",
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "default-allow-rdp",
+                        "properties": {
+                            "priority": 1000,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "3389",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    },
+                    {
+                        "name": "default-allow-http",
+                        "properties": {
+                            "priority": 100,
+                            "sourceAddressPrefix": "*",
+                            "protocol": "Tcp",
+                            "destinationPortRange": "80",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2019-02-01",
+            "name": "[parameters('virtualNetworks_name')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName1'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName2'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName3'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName4'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName5'))]",
+                "[concat('Microsoft.Network/networkSecurityGroups/', variables('networkSecurityGroupName6'))]"
+            ],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.1.0.0/16"
+                    ]
+                },
+            "subnets": [
+                {
+                    "name": "[variables('subnet1Name')]",
+                    "properties": {
+                        "addressPrefix": "10.1.0.0/24",
+                        "networkSecurityGroup": {
+                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName1'))]"
+                        },
+                        "serviceEndpoints": [
+                            {
+                                "service": "Microsoft.Sql"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "[variables('subnet2Name')]",
+                    "properties": {
+                        "addressPrefix": "10.1.1.0/24",
+                        "networkSecurityGroup": {
+                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName2'))]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('subnet3Name')]",
+                    "properties": {
+                        "addressPrefix": "10.1.3.0/24",
+                        "networkSecurityGroup": {
+                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName3'))]"
+                        },
+                        "serviceEndpoints": [
+                            {
+                                "service": "Microsoft.AzureActiveDirectory"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "[variables('subnet4Name')]",
+                    "properties": {
+                        "addressPrefix": "10.1.4.0/29",
+                        "networkSecurityGroup": {
+                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName4'))]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('subnet5Name')]",
+                    "properties": {
+                        "addressPrefix": "10.1.2.0/24",
+                        "networkSecurityGroup": {
+                            "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName5'))]"
+                        }
+                    }
+                },
+                {
+                    "name": "[variables('subnet6Name')]",
+                    "properties": {
+                        "addressPrefix": "10.1.5.0/24"
+                    }
+                }
+            ]
+        }
+    }
+]
+}

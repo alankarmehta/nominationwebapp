@@ -1,0 +1,15 @@
+@log =
+EXTRACT id int,
+        fullname string
+FROM @log_file
+USING Extractors.Text(',', silent:true);
+	
+@summary =
+SELECT id,
+       fullname
+FROM @log
+WHERE (id <= 10);
+
+OUTPUT @summary
+    TO @summary_file
+    USING Outputters.Csv();

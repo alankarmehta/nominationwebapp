@@ -1,0 +1,72 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworks_name": {
+            "type": "string"
+        },
+        "subnet3Name": {
+            "type": "string"
+        },
+        "adls_accountName": {
+            "type": "string"
+        },
+        "adla_accountName": {
+            "type": "string"
+        },
+        "startIpAddress": {
+            "type": "string"
+                },
+        "endIpAddress": {
+            "type": "string"
+                }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.DataLakeStore/accounts",
+            "apiVersion": "2016-11-01",
+            "name": "[parameters('adls_accountName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "virtualNetworkRules": [
+                    {
+                        "properties": {
+                            "subnetId": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_name'), parameters('subnet3Name'))]"
+                        },
+                        "name": "vnetrulename"
+                    }
+                ],
+                "firewallState": "Disabled",
+                "firewallAllowAzureIps": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.DataLakeAnalytics/accounts",
+            "apiVersion": "2016-11-01",
+            "name": "[parameters('adla_accountName')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[concat('Microsoft.DataLakeStore/accounts/', parameters('adls_accountName'))]"
+            ],
+            "properties": {
+                "defaultDataLakeStoreAccount": "[parameters('adls_accountName')]",
+                "dataLakeStoreAccounts": [
+                    {
+                        "name": "[parameters('adls_accountName')]"
+                    }
+                ],
+                "firewallRules": [
+                    {
+                      "name": "[concat(parameters('adla_accountName'), 'rule2')]",
+                      "properties": {
+                        "startIpAddress": "[parameters('startIpAddress')]",
+                        "endIpAddress": "[parameters('endIpAddress')]"
+                      }
+                    }
+                  ],
+                  "firewallState": "Enabled",
+                  "firewallAllowAzureIps": "Enabled"
+            }
+        }
+    ]
+}
