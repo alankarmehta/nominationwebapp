@@ -1,0 +1,131 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+      dataFactoryName: "adforchestrator"
+      vaults_name: "securekeyvault999"
+      objectId: "69999bb2-d541-4d4b-8294-69796dde5736"
+      sites_name: "GoaTripNominationapp" 
+      startIpAddress: "219.65.93.0"
+      endIpAddress: "219.65.93.253"
+      resourcesgpname: "newappdemo"
+      location: "eastus2"
+      spkey: "IY1v6+ONiaKOGp1YZLg/W5tujdQbw6/hggHkfeu/NZI="
+      spid: "a0bd114f-2a8c-41c0-b808-21feef8cc9ed"
+      subscription_id: "b4da08f6-7e8d-4942-84d1-82665ac2b99e"
+      tenantId: "c160a942-c869-429f-8a96-f8c8296d57db"
+      usqlscriptpath: "https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/SummarizeLogs.usql"
+      templateLink: 'https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/mastertemplate.json'
+
+  tasks:
+    - name: AZ Login to Azure
+      shell: >
+            az login --service-principal
+            -u "{{ spid | mandatory }}"
+            -p "{{ spkey | mandatory }}"
+            --tenant "{{ tenantId | mandatory }}" && az account set --subscription "{{ subscription_id }}"
+    - name: Fetch connection string to on-premise SQL DB from shared Key Vault
+      shell: >
+            echo $(az keyvault secret show --name "{{ secretName }}" --vault-name "{{ vaults_name }}" --query value --output tsv)
+      register: var_connstring
+
+    - name: Deploy ARM template
+      azure_rm_deployment:
+        subscription_id: "{{ subscription_id }}"
+        client_id: "{{ spid }}"
+        tenant: "{{ tenantId }}"
+        secret: "{{ spkey }}"
+        resource_group_name: "{{ resourcesgpname }}"
+        location: "{{ location }}"
+        state: present
+        parameters:
+          dataFactoryName: 
+            value: "{{ dataFactoryName }}"
+          vaults_name: 
+            value: "{{ vaults_name }}"
+          objectId: 
+            value: "{{ objectId }}"
+          sites_name: 
+            value: "{{ sites_name }}" 
+          startIpAddress: 
+            value: "{{ startIpAddress }}"
+          endIpAddress: 
+            value: "{{ endIpAddress }}"
+          resourcesgpname: 
+            value: "{{ resourcesgpname }}"
+          location: 
+            value: "{{ location }}"
+          spkey: 
+            value: "{{ spkey }}"
+          spid: 
+            value: "{{ spid }}"
+          subscription_id: 
+            value: "{{ subscription_id }}"
+          tenantId: 
+            value: "{{ tenantId }}"
+          usqlscriptpath: 
+            value: "{{ usqlscriptpath }}"
+        template_link: '{{ templateLink }}'
+
+    - name: Request Azure SPN Access Token
+      uri:
+          url: "https://login.microsoftonline.com/c160a942-c869-429f-8a96-f8c8296d57db/oauth2/token"
+          method: "POST"
+          return_content: yes
+          body: "grant_type=client_credentials&client_id={{ spid |urlencode}}&client_secret={{ spkey |urlencode}}&resource=https://management.azure.com/"
+          status_code: 200,201
+          headers:
+          Content-Type: "application/x-www-form-urlencoded"
+      register: var_access
+
+
+    - name: Start Trigger1
+      uri:
+        url: "https://management.azure.com/subscriptions/{{subscription_id}}/resourceGroups/{{resourcesgpname}}/providers/Microsoft.DataFactory/factories/{{dataFactoryName}}/triggers/Trigger1/start?api-version=2018-06-01"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ var_access.json.access_token }}"
+          Content-Length: 0
+          Content-Type: "application/json"
+        status_code: 200 
+      retries: 3
+      delay: 60
+
+    - name: Start Trigger2
+      uri:
+        url: "https://management.azure.com/subscriptions/{{subscription_id}}/resourceGroups/{{resourcesgpname}}/providers/Microsoft.DataFactory/factories/{{dataFactoryName}}/triggers/Trigger2/start?api-version=2018-06-01"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ var_access.json.access_token }}"
+          Content-Length: 0
+          Content-Type: "application/json"
+        status_code: 200 
+      retries: 3
+      delay: 60
+
+
+    - name: Start Trigger3
+      uri:
+        url: "https://management.azure.com/subscriptions/{{subscription_id}}/resourceGroups/{{resourcesgpname}}/providers/Microsoft.DataFactory/factories/{{dataFactoryName}}/triggers/Trigger3/start?api-version=2018-06-01"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ var_access.json.access_token }}"
+          Content-Length: 0
+          Content-Type: "application/json"
+        status_code: 200 
+      retries: 3
+      delay: 60
+
+
+    - name: Start Trigger4
+      uri:
+        url: "https://management.azure.com/subscriptions/{{subscription_id}}/resourceGroups/{{resourcesgpname}}/providers/Microsoft.DataFactory/factories/{{dataFactoryName}}/triggers/Trigger4/start?api-version=2018-06-01"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ var_access.json.access_token }}"
+          Content-Length: 0
+          Content-Type: "application/json"
+        status_code: 200 
+      retries: 3
+      delay: 60      
