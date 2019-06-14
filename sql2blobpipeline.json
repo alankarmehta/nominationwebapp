@@ -45,7 +45,8 @@
 		"inputDatasetName": "sqldsip1",
 		"outputDatasetName": "blobdsop1",
 		"pipelineName": "CopySqltoBlob",
-		"triggerName": "Trigger1"
+		"triggerName": "Trigger1",
+		"StorageAccountName": "tripsqlserverstorage02"
 	},
 	"resources": [
 		{
@@ -70,7 +71,7 @@
 						"typeProperties": {
 							"connectionString": {
 								"value": 
-								"[Concat('DefaultEndpointsProtocol=https;AccountName='tripsqlserverstorage02';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', 'tripsqlserverstorage02'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+								"[Concat('DefaultEndpointsProtocol=https;AccountName=',Parameters('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', Parameters('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
 								"type": "SecureString"
 							}
 						}
