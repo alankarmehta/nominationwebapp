@@ -113,38 +113,6 @@
             }
         },
         {
-            "type": "microsoft.insights/alertrules",
-            "apiVersion": "2014-04-01",
-            "name": "[variables('alertrules_name')]",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('microsoft.insights/components', parameters('components_name'))]"
-            ],
-            "tags": {
-                "[concat('hidden-link:/subscriptions/',parameters('subscription_id'),'/resourceGroups/',resourceGroup().name,'/providers/microsoft.insights/components/',parameters('components_name'))]": "Resource"
-            },
-            "properties": {
-                "name": "[variables('alertrules_name')]",
-                "isEnabled": true,
-                "condition": {
-                    "odata.type": "Microsoft.Azure.Management.Insights.Models.ThresholdRuleCondition",
-                    "dataSource": {
-                        "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleMetricDataSource",
-                        "resourceUri": "[resourceId('microsoft.insights/components', parameters('components_name'))]",
-                        "metricName": "ScheduledDeleteJobChecker-Failures"
-                    },
-                    "operator": "GreaterThan",
-                    "threshold": 2,
-                    "windowSize": "PT1H"
-                },
-                "action": {
-                    "odata.type": "Microsoft.Azure.Management.Insights.Models.RuleEmailAction",
-                    "sendToServiceOwners": true,
-                    "customEmails": ["alankar.mehta@globant.com"]
-                }
-            }
-        },
-        {
             "type": "Microsoft.Web/sites",
             "apiVersion": "2016-08-01",
             "name": "[parameters('sites_name')]",
