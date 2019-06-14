@@ -4,11 +4,11 @@
     "parameters": {
         "dataFactoryName": {
             "type": "string",
-            "defaultValue": "adforchestration"
+            "defaultValue": "adforchestration9"
 		},
 		"SqlServerConnectionString": {
             "type": "string",
-            "defaultValue": "Server=tcp:tripsqlserv.database.windows.net,1433;Initial Catalog=tripdb;Persist Security Info=False;User ID=admin123;Password=Password@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+            "defaultValue": "Server=tcp:tripsqlserv9.database.windows.net,1433;Initial Catalog=tripdb;Persist Security Info=False;User ID=admin123;Password=Password@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 		},
 		"sqlTableName": {
             "type": "string",
@@ -36,7 +36,7 @@
         },
         "vaults_name": {
             "type": "string",
-            "defaultValue": "securekeyvault99"
+            "defaultValue": "securekeyvault9999"
         },
         "tenantId": {
             "type": "string",
@@ -59,11 +59,11 @@
             "defaultValue": "219.65.93.121"
         },
         "virtualNetworks_name": {
-            "defaultValue": "vnetwebappenv",
+            "defaultValue": "vnetwebappenv9",
             "type": "string"
         },
         "sqlserver_name": {
-            "defaultValue": "tripsqlserv",
+            "defaultValue": "tripsqlserv9",
             "type": "string"
         },
         "username": {
@@ -75,43 +75,43 @@
             "type": "securestring"
         },
         "sites_name": {
-            "defaultValue": "GoaTripNomination",
+            "defaultValue": "GoaTripNomination9",
             "type": "string"
         },
         "components_name": {
-            "defaultValue": "GoaTripAppInsight",
+            "defaultValue": "GoaTripAppInsight9",
             "type": "string"
         },
         "appserviceplan_name": {
-            "defaultValue": "appserviceplan",
+            "defaultValue": "appserviceplan9",
             "type": "string"
         },
         "adls_accountName": {
-            "defaultValue": "adlstransform",
+            "defaultValue": "adlstransform9",
             "type": "string"
         },
         "applicationGateways_name": {
-            "defaultValue": "appgateway",
+            "defaultValue": "appgateway9",
             "type": "string"
         },
         "publicIPAddresses_name": {
-            "defaultValue": "appgateway-ip",
+            "defaultValue": "appgateway-ip9",
             "type": "string"
         },
         "adla_accountName": {
-            "defaultValue": "adlatransform",
+            "defaultValue": "adlatransform9",
             "type": "string"
         },
         "storageAccounts_name": {
-            "defaultValue": "tripsqlserverstorage01",
+            "defaultValue": "tripsqlserverstorage019",
             "type": "string"
         },
         "alertrules_name": {
-            "defaultValue": "Failure Anomalies - GoaTripForm2",
+            "defaultValue": "Failure Anomalies - GoaTripForm29",
             "type": "string"
         },
         "subscription_id": {
-            "defaultValue": "7bf6e74a-2525-44fa-b0a2-661c6ba2222a",
+            "defaultValue": "b4da08f6-7e8d-4942-84d1-82665ac2b99e",
             "type": "string"
         },
         "spid": {
