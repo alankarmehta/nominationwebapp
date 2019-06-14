@@ -1,0 +1,484 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "dataFactoryName": {
+            "type": "string",
+            "defaultValue": "adforchestration"
+		},
+		"SqlServerConnectionString": {
+            "type": "string",
+            "defaultValue": "Server=tcp:tripsqlserv.database.windows.net,1433;Initial Catalog=tripdb;Persist Security Info=False;User ID=admin123;Password=Password@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+		},
+		"sqlTableName": {
+            "type": "string",
+            "defaultValue": "tblFullname"
+		},
+		"azureStorageConnectionString": {
+            "type": "string",
+            "defaultValue": "DefaultEndpointsProtocol=https;AccountName=tripsqlserverstorage01;AccountKey=5H43nTCRWLL/5NCWSU90bK/C+OjMJ8tXAmrBGIQI5KKj4p5fkZ1MSvTE0cHJbXVyfNyty8tFTt8hzFSNQcoWYQ=="
+		},
+		"containerName": {
+            "type": "string",
+            "defaultValue": "ingest"
+		},
+		"blobFolder": {
+            "type": "string",
+            "defaultValue": "data"
+        },
+        "adlsFolder": {
+            "type": "string",
+            "defaultValue": "preprocess"
+        },
+        "processedFile": {
+            "type": "string",
+            "defaultValue": "filteredoutput"
+        },
+        "vaults_name": {
+            "type": "string",
+            "defaultValue": "securekeyvault99"
+        },
+        "tenantId": {
+            "type": "string",
+            "defaultValue": "c160a942-c869-429f-8a96-f8c8296d57db"
+        },
+        "objectId": {
+            "type": "string",
+            "defaultValue": "69999bb2-d541-4d4b-8294-69796dde5736"
+        },
+        "connstring": {
+            "type": "string",
+            "defaultValue": "219.65.93.121"
+        },
+        "startIpAddress": {
+            "type": "string",
+            "defaultValue": "219.65.93.121"
+        },
+        "endIpAddress": {
+            "type": "string",
+            "defaultValue": "219.65.93.121"
+        },
+        "virtualNetworks_name": {
+            "defaultValue": "vnetwebappenv",
+            "type": "string"
+        },
+        "sqlserver_name": {
+            "defaultValue": "tripsqlserv",
+            "type": "string"
+        },
+        "username": {
+            "defaultValue": "admin123",
+            "type": "string"
+        },
+        "password": {
+            "defaultValue": "Password@123",
+            "type": "securestring"
+        },
+        "sites_name": {
+            "defaultValue": "GoaTripNomination",
+            "type": "string"
+        },
+        "components_name": {
+            "defaultValue": "GoaTripAppInsight",
+            "type": "string"
+        },
+        "appserviceplan_name": {
+            "defaultValue": "appserviceplan",
+            "type": "string"
+        },
+        "adls_accountName": {
+            "defaultValue": "adlstransform",
+            "type": "string"
+        },
+        "applicationGateways_name": {
+            "defaultValue": "appgateway",
+            "type": "string"
+        },
+        "publicIPAddresses_name": {
+            "defaultValue": "appgateway-ip",
+            "type": "string"
+        },
+        "adla_accountName": {
+            "defaultValue": "adlatransform",
+            "type": "string"
+        },
+        "storageAccounts_name": {
+            "defaultValue": "tripsqlserverstorage01",
+            "type": "string"
+        },
+        "alertrules_name": {
+            "defaultValue": "Failure Anomalies - GoaTripForm2",
+            "type": "string"
+        },
+        "subscription_id": {
+            "defaultValue": "7bf6e74a-2525-44fa-b0a2-661c6ba2222a",
+            "type": "string"
+        },
+        "spid": {
+            "defaultValue": "a0bd114f-2a8c-41c0-b808-21feef8cc9ed",
+            "type": "string"
+        },
+        "spkey": {
+            "defaultValue": "IY1v6+ONiaKOGp1YZLg/W5tujdQbw6/hggHkfeu/NZI=",
+            "type": "string"
+        },
+        "usqlscriptpath": {
+            "defaultValue": "https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/SummarizeLogs.usql",
+            "type": "string"
+        }
+    },
+    "variables": {
+        "subnet1Name": "sqlservsubnet",
+        "subnet2Name": "keyvaultnsg",
+        "subnet3Name": "adlsubnet",
+        "subnet4Name": "managementsubnet",
+        "subnet5Name": "webaapsubnet",
+        "subnet6Name": "appgatewaysubnet",
+        "sqldbname": "tripdb",
+        "networkSecurityGroupName1": "sqlservnsg",
+        "networkSecurityGroupName2": "keyvaultnsg",
+        "networkSecurityGroupName3": "adlnsg",
+        "networkSecurityGroupName4": "managementnsg",
+        "networkSecurityGroupName5": "webappnsg",
+        "networkSecurityGroupName6": "appgatewaynsg"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "name": "deployvirtualnetwork",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/virtualnetwork.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworks_name": {
+                        "value": "[parameters('virtualNetworks_name')]"
+                    },
+                    "appserviceplan_name": {
+                        "value": "[parameters('appserviceplan_name')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "name": "deploykeyvault",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'deployvirtualnetwork')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/keyvault.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vaults_name": {
+                        "value": "[parameters('vaults_name')]"
+                    },
+                    "tenantId": {
+                        "value": "[parameters('tenantId')]"
+                    },
+                    "objectId": {
+                        "value": "[parameters('objectId')]"
+                    },
+                    "username": {
+                        "value": "[parameters('username')]"
+                    },
+                    "password": {
+                        "value": "[parameters('password')]"
+                    },
+                    "connstring": {
+                        "value": "[parameters('connstring')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "name": "deploywebapp",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'deployvirtualnetwork')]",
+                "[concat('Microsoft.Resources/deployments/', 'deploykeyvault')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/webapp.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworks_name": {
+                        "value": "[parameters('virtualNetworks_name')]"
+                    },
+                    "appserviceplan_name": {
+                        "value": "[parameters('appserviceplan_name')]"
+                    },
+                    "components_name": {
+                        "value": "[parameters('components_name')]"
+                    },
+                    "sites_name": {
+                        "value": "[parameters('sites_name')]"
+                    },
+                    "applicationGateways_name": {
+                        "value": "[parameters('applicationGateways_name')]"
+                    },
+                    "subnet5Name": {
+                        "value": "[variables('subnet5Name')]"
+                    },
+                    "subnet6Name": {
+                        "value": "[variables('subnet6Name')]"
+                    },
+                    "subscription_id": {
+                        "value": "[parameters('subscription_id')]"
+                    }
+                }
+            }
+        },  
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "name": "deploysqlserver",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'deployvirtualnetwork')]",
+                "[concat('Microsoft.Resources/deployments/', 'deploywebapp')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/sqlserverdb.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworks_name": {
+                        "value": "[parameters('virtualNetworks_name')]"
+                    },
+                    "subnet1Name": {
+                        "value": "[variables('subnet1Name')]"
+                    },
+                    "username": {
+                        "value": "[parameters('username')]"
+                    },
+                    "password": {
+                        "value": "[parameters('password')]"
+                    },
+                    "sqlserver_name": {
+                        "value": "[parameters('sqlserver_name')]"
+                    },
+                    "storageAccounts_name": {
+                        "value": "[parameters('storageAccounts_name')]"
+                    },
+                    "sqldbname": {
+                        "value": "[variables('sqldbname')]"
+                    },
+                    "subscription_id": {
+                        "value": "[parameters('subscription_id')]"
+                    }
+                }
+            }
+        },     
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "name": "deploydatalake",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'deployvirtualnetwork')]",
+                "[concat('Microsoft.Resources/deployments/', 'deploysqlserver')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/datalake.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworks_name": {
+                        "value": "[parameters('virtualNetworks_name')]"
+                    },
+                    "subnet3Name": {
+                        "value": "[variables('subnet3Name')]"
+                    },
+                    "adls_accountName": {
+                        "value": "[parameters('adls_accountName')]"
+                    },
+                    "adla_accountName": {
+                        "value": "[parameters('adla_accountName')]"
+                    },
+                    "startIpAddress": {
+                        "value": "[parameters('startIpAddress')]"
+                    },
+                    "endIpAddress": {
+                        "value": "[parameters('endIpAddress')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "name": "deploymanagementserver",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'deployvirtualnetwork')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/managementserver.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworks_name": {
+                        "value": "[parameters('virtualNetworks_name')]"
+                    },
+                    "subnet4Name": {
+                        "value": "[variables('subnet3Name')]"
+                    },
+                    "username": {
+                        "value": "[parameters('username')]"
+                    },
+                    "password": {
+                        "value": "[parameters('password')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "name": "deploysqltoblobpipeline",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'deploymanagementserver')]",
+                "[concat('Microsoft.Resources/deployments/', 'deploydatalake')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/sql2blobpipeline.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "dataFactoryName": {
+                        "value": "[parameters('dataFactoryName')]"
+                    },
+                    "SqlServerConnectionString": {
+                        "value": "[parameters('SqlServerConnectionString')]"
+                    },
+                    "sqlTableName": {
+                        "value": "[parameters('sqlTableName')]"
+                    },
+                    "azureStorageConnectionString": {
+                        "value": "[parameters('azureStorageConnectionString')]"
+                    },
+                    "containerName": {
+                        "value": "[parameters('containerName')]"
+                    },
+                    "blobFolder": {
+                        "value": "[parameters('blobFolder')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "name": "deployblobtoadlspipeline",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'deploysqltoblobpipeline')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/blob2adlspipeline.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "dataFactoryName": {
+                        "value": "[parameters('dataFactoryName')]"
+                    },
+                    "adls_accountName": {
+                        "value": "[parameters('adls_accountName')]"
+                    },
+                    "azureStorageConnectionString": {
+                        "value": "[parameters('azureStorageConnectionString')]"
+                    },
+                    "spid": {
+                        "value": "[parameters('spid')]"
+                    },
+                    "spkey": {
+                        "value": "[parameters('spkey')]"
+                    },
+                    "subscription_id": {
+                        "value": "[parameters('subscription_id')]"
+                    },
+                    "tenantId": {
+                        "value": "[parameters('tenantId')]"
+                    },
+                    "containerName": {
+                        "value": "[parameters('containerName')]"
+                    },
+                    "blobFolder": {
+                        "value": "[parameters('blobFolder')]"
+                    },
+                    "adlsFolder": {
+                        "value": "[parameters('adlsFolder')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2015-01-01",
+            "name": "deployadlstoadlspipeline",
+            "dependsOn": [
+                "[concat('Microsoft.Resources/deployments/', 'deployblobtoadlspipeline')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/adls2adlspipeline.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "dataFactoryName": {
+                        "value": "[parameters('dataFactoryName')]"
+                    },
+                    "adls_accountName": {
+                        "value": "[parameters('adls_accountName')]"
+                    },
+                    "spid": {
+                        "value": "[parameters('spid')]"
+                    },
+                    "spkey": {
+                        "value": "[parameters('spkey')]"
+                    },
+                    "subscription_id": {
+                        "value": "[parameters('subscription_id')]"
+                    },
+                    "tenantId": {
+                        "value": "[parameters('tenantId')]"
+                    },
+                    "adla_accountName": {
+                        "value": "[parameters('adla_accountName')]"
+                    },
+                    "adlsFolder": {
+                        "value": "[parameters('adlsFolder')]"
+                    },
+                    "preprocessfile": {
+                        "value": "[parameters('sqlTableName')]"
+                    },
+                    "processedfile": {
+                        "value": "[parameters('processedfile')]"
+                    },
+                    "usqlscriptpath": {
+                        "value": "[parameters('usqlscriptpath')]"
+                    }
+                }
+            }
+        }
+    ]
+}
