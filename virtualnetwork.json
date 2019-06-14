@@ -60,7 +60,7 @@
                         "name": "default-allow-rdp",
                         "properties": {
                             "priority": 1000,
-                            "sourceAddressPrefix": "10.1.4.0/29",
+                            "sourceAddressPrefix": "10.2.4.0/29",
                             "protocol": "Tcp",
                             "destinationPortRange": "3389",
                             "access": "Allow",
@@ -132,7 +132,7 @@
                         "name": "default-allow-rdp",
                         "properties": {
                             "priority": 1000,
-                            "sourceAddressPrefix": "10.1.4.0/29",
+                            "sourceAddressPrefix": "10.2.4.0/29",
                             "protocol": "Tcp",
                             "destinationPortRange": "3389",
                             "access": "Allow",
@@ -197,14 +197,14 @@
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "10.1.0.0/16"
+                        "10.2.0.0/16"
                     ]
                 },
             "subnets": [
                 {
                     "name": "[variables('subnet1Name')]",
                     "properties": {
-                        "addressPrefix": "10.1.0.0/24",
+                        "addressPrefix": "10.2.0.0/24",
                         "networkSecurityGroup": {
                             "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName1'))]"
                         },
@@ -218,7 +218,7 @@
                 {
                     "name": "[variables('subnet2Name')]",
                     "properties": {
-                        "addressPrefix": "10.1.1.0/24",
+                        "addressPrefix": "10.2.1.0/24",
                         "networkSecurityGroup": {
                             "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName2'))]"
                         }
@@ -227,7 +227,7 @@
                 {
                     "name": "[variables('subnet3Name')]",
                     "properties": {
-                        "addressPrefix": "10.1.3.0/24",
+                        "addressPrefix": "10.2.3.0/24",
                         "networkSecurityGroup": {
                             "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName3'))]"
                         },
@@ -241,7 +241,7 @@
                 {
                     "name": "[variables('subnet4Name')]",
                     "properties": {
-                        "addressPrefix": "10.1.4.0/29",
+                        "addressPrefix": "10.2.4.0/29",
                         "networkSecurityGroup": {
                             "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName4'))]"
                         }
@@ -250,7 +250,7 @@
                 {
                     "name": "[variables('subnet5Name')]",
                     "properties": {
-                        "addressPrefix": "10.1.2.0/24",
+                        "addressPrefix": "10.2.2.0/24",
                         "networkSecurityGroup": {
                             "id": "[resourceId('Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName5'))]"
                         }
@@ -259,7 +259,7 @@
                 {
                     "name": "[variables('subnet6Name')]",
                     "properties": {
-                        "addressPrefix": "10.1.5.0/24"
+                        "addressPrefix": "10.2.5.0/24"
                     }
                 }
             ]
