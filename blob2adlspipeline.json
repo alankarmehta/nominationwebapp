@@ -42,7 +42,8 @@
         "DatalakeLinkedservice": "adlslsop2",
         "inputDatasetName": "blobdsip2",
         "outputDatasetName": "adlsdsop2",
-        "pipelineName": "CopyBlobtoAdls"
+        "pipelineName": "CopyBlobtoAdls",
+        "triggerName": "Trigger2"
     },
     "resources": [
         {
@@ -223,7 +224,42 @@
                         "[variables('outputDatasetName')]",
                         "[parameters('dataFactoryName')]"
                     ]
-                }
+                },
+                {
+					"type": "triggers",
+					"name": "[variables('triggerName')]",
+					"dependsOn": [
+						"[parameters('dataFactoryName')]",
+						"[variables('azureStorageLinkedServiceName')]",
+						"[variables ('DatalakeLinkedservice')]",
+						"[variables('inputDatasetName')]",
+						"[variables('outputDatasetName')]",
+						"[variables('pipelineName')]"
+					],
+					"apiVersion": "2018-06-01",
+					"properties": {
+						"type": "ScheduleTrigger",
+						"runtimeState": "Started",
+						"typeProperties": {
+							"recurrence": {
+								"frequency": "Minute",
+								"interval": 2,
+								"startTime": "2019-05-22T04:35:00.000Z",
+								"endTime": "2019-05-24T23:30:00.000Z",
+								"timeZone": "UTC"
+							}
+						},
+						"pipelines": [
+							{
+								"pipelineReference": {
+									"type": "PipelineReference",
+									"referenceName": "[variables('pipelineName')]"
+								},
+								"parameters": {}
+							}
+						]
+					}
+				}
             ]
         }
     ]

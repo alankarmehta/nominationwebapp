@@ -41,7 +41,8 @@
         }
     },
     "variables": {
-        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('dataFactoryName'))]"
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('dataFactoryName'))]",
+        "triggerName": "Trigger3"
     },
     "resources": [
         {
@@ -200,7 +201,38 @@
                         "[concat(variables('factoryId'), '/linkedServices/adlsls4')]",
                         "[parameters('dataFactoryName')]"
                     ]
-                }
+                },
+                {
+					"type": "triggers",
+					"name": "[variables('triggerName')]",
+					"dependsOn": [
+						"[parameters('dataFactoryName')]",
+                        "[concat(variables('factoryId'), '/pipelines/transformpipeline')]"
+					],
+					"apiVersion": "2018-06-01",
+					"properties": {
+						"type": "ScheduleTrigger",
+						"runtimeState": "Started",
+						"typeProperties": {
+							"recurrence": {
+								"frequency": "Minute",
+								"interval": 2,
+								"startTime": "2019-05-22T04:35:00.000Z",
+								"endTime": "2019-05-24T23:30:00.000Z",
+								"timeZone": "UTC"
+							}
+						},
+						"pipelines": [
+							{
+								"pipelineReference": {
+									"type": "PipelineReference",
+									"referenceName": "transformpipeline"
+								},
+								"parameters": {}
+							}
+						]
+					}
+				}
             ]
         }
     ]
