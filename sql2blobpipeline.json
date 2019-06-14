@@ -46,7 +46,7 @@
 		"outputDatasetName": "blobdsop1",
 		"pipelineName": "CopySqltoBlob",
 		"triggerName": "Trigger1",
-		"StorageAccountName": "tripsqlserverstorage02"
+		"StorageAccountName": "tripsqlserverstorage019"
 	},
 	"resources": [
 		{

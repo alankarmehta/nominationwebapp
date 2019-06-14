@@ -43,7 +43,7 @@
         "outputDatasetName": "adlsdsop2",
         "pipelineName": "CopyBlobtoAdls",
         "triggerName": "Trigger2",
-        "StorageAccountName": "tripsqlserverstorage02"
+        "StorageAccountName": "tripsqlserverstorage019"
     },
     "resources": [
         {
