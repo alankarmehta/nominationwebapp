@@ -21,8 +21,7 @@
             "defaultValue": "c160a942-c869-429f-8a96-f8c8296d57db"
         },
         "subscription_id": {
-            "type": "string",
-            "defaultValue": "7bf6e74a-2525-44fa-b0a2-661c6ba2222a"
+            "type": "string"
         },
         "adla_accountName": {
             "type": "string"
@@ -203,36 +202,36 @@
                     ]
                 },
                 {
-					"type": "triggers",
-					"name": "[variables('triggerName')]",
-					"dependsOn": [
-						"[parameters('dataFactoryName')]",
+                    "type": "triggers",
+                    "name": "[variables('triggerName')]",
+                    "dependsOn": [
+                        "[parameters('dataFactoryName')]",
                         "[concat(variables('factoryId'), '/pipelines/transformpipeline')]"
-					],
-					"apiVersion": "2018-06-01",
-					"properties": {
-						"type": "ScheduleTrigger",
-						"runtimeState": "Started",
-						"typeProperties": {
-							"recurrence": {
-								"frequency": "Minute",
-								"interval": 2,
-								"startTime": "2019-05-22T04:35:00.000Z",
-								"endTime": "2019-05-24T23:30:00.000Z",
-								"timeZone": "UTC"
-							}
-						},
-						"pipelines": [
-							{
-								"pipelineReference": {
-									"type": "PipelineReference",
-									"referenceName": "transformpipeline"
-								},
-								"parameters": {}
-							}
-						]
-					}
-				}
+                    ],
+                    "apiVersion": "2018-06-01",
+                    "properties": {
+                        "type": "ScheduleTrigger",
+                        "runtimeState": "Started",
+                        "typeProperties": {
+                            "recurrence": {
+                                "frequency": "Minute",
+                                "interval": 2,
+                                "startTime": "2019-05-22T04:35:00.000Z",
+                                "endTime": "2019-05-24T23:30:00.000Z",
+                                "timeZone": "UTC"
+                            }
+                        },
+                        "pipelines": [
+                            {
+                                "pipelineReference": {
+                                    "type": "PipelineReference",
+                                    "referenceName": "transformpipeline"
+                                },
+                                "parameters": {}
+                            }
+                        ]
+                    }
+                }
             ]
         }
     ]

@@ -24,8 +24,7 @@
             "defaultValue": "c160a942-c869-429f-8a96-f8c8296d57db"
         },
         "subscription_id": {
-            "type": "string",
-            "defaultValue": "7bf6e74a-2525-44fa-b0a2-661c6ba2222a"
+            "type": "string"
         },
         "containerName": {
             "type": "string"
@@ -63,7 +62,8 @@
                         "annotations": [],
                         "type": "AzureBlobStorage",
                         "typeProperties": {
-                            "connectionString": "[parameters('azureStorageConnectionString')]"
+                            "connectionString": 
+                            "[Concat('DefaultEndpointsProtocol=https;AccountName=tripsqlserverstorage02;AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', tripsqlserverstorage02, providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
                         }
                     },
                     "dependsOn": [
