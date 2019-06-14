@@ -13,6 +13,16 @@ steps:
 - script: echo Hello, world!
   displayName: 'Run a one-line script'
 
+- task: AzureResourceGroupDeployment@2
+  inputs:
+    azureSubscription: 'Visual Studio Professional(7bf6e74a-2525-44fa-b0a2-661c6ba2222a)'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'devopsdeploy'
+    location: 'East US 2'
+    templateLocation: 'URL of the file'
+    csmFileLink: 'https://raw.githubusercontent.com/alankarmehta/nominationwebapp/master/mastertemplate.json'
+    deploymentMode: 'Incremental'
+
 - script: |
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
