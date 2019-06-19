@@ -320,7 +320,7 @@
                             "pickHostNameFromBackendAddress": false,
                             "requestTimeout": 30,
                             "probe": {
-                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_appgateway_name')), '/probes/customHealthCheck')]"
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), '/probes/customHealthCheck')]"
                             }
                         },
                         "type": "Microsoft.Network/applicationGateways/backendHttpSettingsCollection"

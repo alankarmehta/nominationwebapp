@@ -87,9 +87,9 @@
     - name: AZ Login to Azure
       shell: >
             az login --service-principal
-            -u "{{ servicePrincipalId | mandatory }}"
+            -u "{{ spid | mandatory }}"
             -p "{{ spkey | mandatory }}"
-            --tenant "{{ tenant | mandatory }}" && az account set --subscription "{{ hostSubscriptionId }}"
+            --tenant "{{ tenantId | mandatory }}" && az account set --subscription "{{ subscription_id }}"
     
     - name: create container
       shell: >
