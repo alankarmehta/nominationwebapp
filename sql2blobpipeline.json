@@ -37,6 +37,9 @@
 			"metadata": {
 				"description": "The folder in the blob container to which the data is copied."
 			}
+		},
+		"StorageAccountName": {
+			"type": "string"
 		}
 	},
 	"variables": {
@@ -45,8 +48,7 @@
 		"inputDatasetName": "sqldsip1",
 		"outputDatasetName": "blobdsop1",
 		"pipelineName": "CopySqltoBlob",
-		"triggerName": "Trigger1",
-		"StorageAccountName": "tripsqlserverstorage019"
+		"triggerName": "Trigger1"
 	},
 	"resources": [
 		{
@@ -70,8 +72,7 @@
 						"description": "Azure Storage linked service",
 						"typeProperties": {
 							"connectionString": {
-								"value": 
-								"[Concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
+								"value": "[Concat('DefaultEndpointsProtocol=https;AccountName=',parameters('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]",
 								"type": "SecureString"
 							}
 						}

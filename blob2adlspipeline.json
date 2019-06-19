@@ -34,6 +34,9 @@
         },
         "adlsFolder": {
             "type": "string"
+        },
+        "StorageAccountName": {
+            "type": "string"
         }
     },
     "variables": {
@@ -42,8 +45,7 @@
         "inputDatasetName": "blobdsip2",
         "outputDatasetName": "adlsdsop2",
         "pipelineName": "CopyBlobtoAdls",
-        "triggerName": "Trigger2",
-        "StorageAccountName": "tripsqlserverstorage019"
+        "triggerName": "Trigger2"
     },
     "resources": [
         {
@@ -64,7 +66,7 @@
                         "type": "AzureBlobStorage",
                         "typeProperties": {
                             "connectionString": 
-                            "[Concat('DefaultEndpointsProtocol=https;AccountName=',variables('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+                            "[Concat('DefaultEndpointsProtocol=https;AccountName=',parameters('StorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
                         }
                     },
                     "dependsOn": [

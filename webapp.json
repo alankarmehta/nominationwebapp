@@ -318,7 +318,10 @@
                             "protocol": "Http",
                             "cookieBasedAffinity": "Disabled",
                             "pickHostNameFromBackendAddress": false,
-                            "requestTimeout": 30
+                            "requestTimeout": 30,
+                            "probe": {
+                                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_appgateway_name')), '/probes/customHealthCheck')]"
+                            }
                         },
                         "type": "Microsoft.Network/applicationGateways/backendHttpSettingsCollection"
                     }
@@ -356,6 +359,26 @@
                             }
                         },
                         "type": "Microsoft.Network/applicationGateways/requestRoutingRules"
+                    }
+                ],
+                "probes": [
+                    {
+                        "name": "customHealthCheck",
+                        "properties": {
+                            "protocol": "Http",
+                            "path": "/WebForm1.aspx",
+                            "interval": 30,
+                            "timeout": 30,
+                            "unhealthyThreshold": 3,
+                            "pickHostNameFromBackendHttpSettings": true,
+                            "minServers": 0,
+                            "match": {
+                                "statusCodes": [
+                                    "200-399"
+                                ]
+                            }
+                        },
+                        "type": "Microsoft.Network/applicationGateways/probes"
                     }
                 ],
                 "webApplicationFirewallConfiguration": {

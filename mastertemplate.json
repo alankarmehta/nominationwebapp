@@ -4,11 +4,11 @@
     "parameters": {
         "dataFactoryName": {
             "type": "string",
-            "defaultValue": "adforchestration9"
+            "defaultValue": "adforchestration99"
 		},
 		"SqlServerConnectionString": {
             "type": "string",
-            "defaultValue": "Server=tcp:tripsqlserv9.database.windows.net,1433;Initial Catalog=tripdb;Persist Security Info=False;User ID=admin123;Password=Password@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+            "defaultValue": "Server=tcp:tripsqlserv99.database.windows.net,1433;Initial Catalog=tripdb;Persist Security Info=False;User ID=admin123;Password=Password@123;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
 		},
 		"sqlTableName": {
             "type": "string",
@@ -59,11 +59,11 @@
             "defaultValue": "219.65.93.121"
         },
         "virtualNetworks_name": {
-            "defaultValue": "vnetwebappenv9",
+            "defaultValue": "vnetwebappenv99",
             "type": "string"
         },
         "sqlserver_name": {
-            "defaultValue": "tripsqlserv9",
+            "defaultValue": "tripsqlserv99",
             "type": "string"
         },
         "username": {
@@ -103,15 +103,15 @@
             "type": "string"
         },
         "storageAccounts_name": {
-            "defaultValue": "tripsqlserverstorage019",
+            "defaultValue": "tripsqlserverstorage999",
             "type": "string"
         },
         "alertrules_name": {
-            "defaultValue": "Failure Anomalies - GoaTripForm209",
+            "defaultValue": "Failure Anomalies - GoaTripForm99",
             "type": "string"
         },
         "subscription_id": {
-            "defaultValue": "b4da08f6-7e8d-4942-84d1-82665ac2b99e",
+            "defaultValue": "d6327f0f-a8f5-4a20-a651-3020e65a158b",
             "type": "string"
         },
         "spid": {
@@ -379,6 +379,9 @@
                     },
                     "blobFolder": {
                         "value": "[parameters('blobFolder')]"
+                    },
+                    "StorageAccountName": {
+                        "value": "[parameters('storageAccounts_name')]"
                     }
                 }
             }
@@ -426,6 +429,9 @@
                     },
                     "adlsFolder": {
                         "value": "[parameters('adlsFolder')]"
+                    },
+                    "StorageAccountName": {
+                        "value": "[parameters('storageAccounts_name')]"
                     }
                 }
             }
