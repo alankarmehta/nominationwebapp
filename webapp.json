@@ -317,7 +317,7 @@
                             "port": 80,
                             "protocol": "Http",
                             "cookieBasedAffinity": "Disabled",
-                            "pickHostNameFromBackendAddress": false,
+                            "pickHostNameFromBackendAddress": true,
                             "requestTimeout": 30,
                             "probe": {
                                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('applicationGateways_name')), '/probes/customHealthCheck')]"
