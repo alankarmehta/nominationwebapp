@@ -314,6 +314,7 @@
                     {
                         "name": "appGatewayBackendHttpSettings",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "port": 80,
                             "protocol": "Http",
                             "cookieBasedAffinity": "Disabled",
@@ -365,8 +366,9 @@
                     {
                         "name": "customHealthCheck",
                         "properties": {
+                            "provisioningState": "Succeeded",
                             "protocol": "Http",
-                            "path": "/WebForm1.aspx",
+                            "path": "/",
                             "interval": 30,
                             "timeout": 30,
                             "unhealthyThreshold": 3,
